@@ -1,10 +1,14 @@
 " forked from 
-" https://github.com/hut/ranger/blob/master/doc/examples/vim_file_chooser.vim
+" https://github.com/hut/ranger/blob/master/examples/vim_file_chooser.vim
 
 function! s:RangerChooser(dirname)
     if isdirectory(a:dirname)
         let temp = tempname()
-        exec 'silent !ranger --choosefiles=' . shellescape(temp) . ' ' . a:dirname
+        if has("gui_running")
+            exec 'silent !xterm -e ranger --choosefiles=' . shellescape(temp) . ' ' . a:dirname
+        else
+            exec 'silent !ranger --choosefiles=' . shellescape(temp) . ' ' . a:dirname
+        endif
         if !filereadable(temp)
             " close window if nothing to read, probably user closed ranger
             close
@@ -30,5 +34,5 @@ function! s:RangerChooser(dirname)
     endif
 endfunction
 
-au BufEnter *  sil! call s:RangerChooser(expand("<amatch>"))
+au BufEnter * silent call s:RangerChooser(expand("<amatch>"))
 let g:loaded_netrwPlugin = 'disable'
